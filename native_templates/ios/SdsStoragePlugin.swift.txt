@@ -1,0 +1,23 @@
+
+// ---- Thêm bởi scripts/patch_platforms.py ----
+/// Kênh native "sds/storage": dung lượng trống của thiết bị (cảnh báo bộ nhớ gần đầy).
+class SdsStoragePlugin: NSObject, FlutterPlugin {
+  static func register(with registrar: FlutterPluginRegistrar) {
+    let channel = FlutterMethodChannel(name: "sds/storage", binaryMessenger: registrar.messenger())
+    registrar.addMethodCallDelegate(SdsStoragePlugin(), channel: channel)
+  }
+
+  func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard call.method == "freeBytes" else {
+      result(FlutterMethodNotImplemented)
+      return
+    }
+    let url = URL(fileURLWithPath: NSHomeDirectory())
+    if let values = try? url.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]),
+       let cap = values.volumeAvailableCapacityForImportantUsage {
+      result(NSNumber(value: cap))
+    } else {
+      result(nil)
+    }
+  }
+}
