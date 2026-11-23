@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APP scan PDF – Giới thiệu & tải APK</title>
+<meta name="description" content="APP scan PDF: scan tài liệu bằng camera, nắn phẳng, làm sáng, xuất PDF. App làm bởi Đào Duy Thanh.">
+<style>
+  :root{--v:#6C4DFF;--b:#2F80FF;--t:#00C2A8;--ink:#1B1D2A;--bg:#F5F6FB}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(135deg,var(--v),var(--b));color:#fff;padding:48px 20px 64px;border-radius:0 0 36px 36px;text-align:center}
+  .logo{width:72px;height:72px;margin:0 auto 14px;background:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px}
+  h1{margin:0;font-size:34px;font-weight:900}
+  header p{margin:8px 0 0;opacity:.9;font-size:17px}
+  main{max-width:760px;margin:-36px auto 0;padding:0 16px}
+  .card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(40,30,120,.08);margin-bottom:16px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;border-radius:18px;
+       background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-size:19px;font-weight:800;text-decoration:none;
+       box-shadow:0 8px 18px rgba(108,77,255,.35)}
+  .btn.alt{background:linear-gradient(135deg,#00C2A8,#00A3FF);box-shadow:0 8px 18px rgba(0,194,168,.3);margin-top:12px}
+  .muted{color:#6B6F80;font-size:14px;line-height:1.55}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .f{background:#fff;border-radius:18px;padding:16px}
+  .f b{display:block;margin-bottom:4px}
+  .warn{background:#FFF4E0;border-radius:16px;padding:14px;font-size:14px;line-height:1.5}
+  footer{text-align:center;color:#6B6F80;font-size:14px;line-height:1.6;padding:26px 16px 36px}
+  footer b{color:var(--ink);font-weight:900}
+  #status{margin-top:10px}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<header>
+  <div class="logo">📄</div>
+  <h1>APP scan PDF</h1>
+  <p>Scan tài liệu bằng camera điện thoại – nắn phẳng, làm sáng, xuất PDF sắc nét</p>
+</header>
+<main>
+  <div class="card">
+    <a id="apk" class="btn" href="#">⬇️ Tải APK cho Android</a>
+    <a id="gh" class="btn alt" href="#">📦 Mã nguồn &amp; các bản build</a>
+    <p id="status" class="muted"></p>
+    <p class="muted">Android: tải file <b>.apk</b> → mở file → cho phép “Cài ứng dụng không rõ nguồn”.
+      iPhone: cần build bằng máy Mac + Xcode và ký bằng Apple ID (xem hướng dẫn trong mã nguồn).</p>
+  </div>
+  <div class="grid">
+    <div class="f"><b>📐 Vuông vắn như máy scan</b><span class="muted">Tự nhận 4 góc, nắn phối cảnh đúng tỷ lệ, tự khớp khổ A4.</span></div>
+    <div class="f"><b>📖 Nắn giấy cong</b><span class="muted">Mép quăn, gáy sách, giấy gợn sóng được trải phẳng.</span></div>
+    <div class="f"><b>☀️ Giấy trắng, chữ rõ</b><span class="muted">Khử bóng, làm sáng – giữ nguyên nét mực, dấu đỏ, chữ ký.</span></div>
+    <div class="f"><b>🔒 Riêng tư, offline</b><span class="muted">Không đăng nhập, không cloud. Dữ liệu chỉ nằm trên máy bạn.</span></div>
+  </div>
+  <div class="card warn" style="margin-top:16px">
+    📱 Dùng ngay trên trình duyệt điện thoại: <a href="./" style="font-weight:800;color:#6C4DFF">Mở APP scan PDF bản web</a>.
+    Bản APK Android có thêm OCR và hiệu năng native.
+  </div>
+</main>
+<footer>
+  <b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026
+</footer>
+<script>
+  const repo = (window.APP_REPO || "").trim();
+  const apk = document.getElementById("apk"), gh = document.getElementById("gh"), st = document.getElementById("status");
+  if (!repo) {
+    apk.removeAttribute("href"); gh.removeAttribute("href");
+    apk.style.opacity = gh.style.opacity = .5;
+    st.textContent = "Chưa cấu hình repo: sửa file site/config.js (APP_REPO = \"tài-khoản/tên-repo\").";
+  } else {
+    apk.href = "https://github.com/" + repo + "/releases/latest/download/app-release.apk";
+    gh.href = "https://github.com/" + repo + "/releases";
+    fetch("https://api.github.com/repos/" + repo + "/releases/latest")
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(j => { st.textContent = "Bản mới nhất: " + j.name + " – " + new Date(j.published_at).toLocaleString("vi-VN"); })
+      .catch(() => { st.textContent = "Chưa có bản build nào. Bản APK sẽ xuất hiện sau khi GitHub Actions build thành công."; });
+  }
+</script>
+</body>
+</html>

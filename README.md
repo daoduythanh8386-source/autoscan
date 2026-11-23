@@ -4,6 +4,8 @@
 
 Cấu hình đã chốt: **AUTO · MAXIMUM · OPTIONAL (OCR) · DEVICE**. Không cần đăng nhập, không cần máy chủ, không cần Internet, không tự tải lên cloud.
 
+**📱 Bản web chạy ngay trên điện thoại:** thư mục `site/` (PWA, deploy bằng Vercel), xem [docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md).
+
 > ⚠️ **Trạng thái hiện tại: mã nguồn v0.1 – NOT VERIFIED.**
 > Mã chưa được chạy trên thiết bị thật. Kiểm thử đơn vị và bản build APK/iOS chạy tự động trên GitHub Actions (xem tab **Actions**). Theo mục 27 của đặc tả, không hạng mục nào được đánh dấu PASS khi chưa kiểm thử trên điện thoại. Xem [docs/REQUIREMENTS_MATRIX.md](docs/REQUIREMENTS_MATRIX.md).
 

@@ -2,76 +2,186 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>APP scan PDF – Scan tài liệu trên điện thoại</title>
-<meta name="description" content="APP scan PDF: scan tài liệu bằng camera, nắn phẳng, làm sáng, xuất PDF. App làm bởi Đào Duy Thanh.">
-<style>
-  :root{--v:#6C4DFF;--b:#2F80FF;--t:#00C2A8;--ink:#1B1D2A;--bg:#F5F6FB}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-  header{background:linear-gradient(135deg,var(--v),var(--b));color:#fff;padding:48px 20px 64px;border-radius:0 0 36px 36px;text-align:center}
-  .logo{width:72px;height:72px;margin:0 auto 14px;background:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px}
-  h1{margin:0;font-size:34px;font-weight:900}
-  header p{margin:8px 0 0;opacity:.9;font-size:17px}
-  main{max-width:760px;margin:-36px auto 0;padding:0 16px}
-  .card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(40,30,120,.08);margin-bottom:16px}
-  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;border-radius:18px;
-       background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-size:19px;font-weight:800;text-decoration:none;
-       box-shadow:0 8px 18px rgba(108,77,255,.35)}
-  .btn.alt{background:linear-gradient(135deg,#00C2A8,#00A3FF);box-shadow:0 8px 18px rgba(0,194,168,.3);margin-top:12px}
-  .muted{color:#6B6F80;font-size:14px;line-height:1.55}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-  .f{background:#fff;border-radius:18px;padding:16px}
-  .f b{display:block;margin-bottom:4px}
-  .warn{background:#FFF4E0;border-radius:16px;padding:14px;font-size:14px;line-height:1.5}
-  footer{text-align:center;color:#6B6F80;font-size:14px;line-height:1.6;padding:26px 16px 36px}
-  footer b{color:var(--ink);font-weight:900}
-  #status{margin-top:10px}
-</style>
-<script src="config.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#6C4DFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="APP scan PDF">
+<meta name="description" content="APP scan PDF – scan tài liệu bằng camera điện thoại, nắn phẳng, làm sáng, xuất PDF. App làm bởi Đào Duy Thanh.">
+<title>APP scan PDF</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header>
-  <div class="logo">📄</div>
-  <h1>APP scan PDF</h1>
-  <p>Scan tài liệu bằng camera điện thoại – nắn phẳng, làm sáng, xuất PDF sắc nét</p>
-</header>
-<main>
-  <div class="card">
-    <a id="apk" class="btn" href="#">⬇️ Tải APK cho Android</a>
-    <a id="gh" class="btn alt" href="#">📦 Mã nguồn &amp; các bản build</a>
-    <p id="status" class="muted"></p>
-    <p class="muted">Android: tải file <b>.apk</b> → mở file → cho phép “Cài ứng dụng không rõ nguồn”.
-      iPhone: cần build bằng máy Mac + Xcode và ký bằng Apple ID (xem hướng dẫn trong mã nguồn).</p>
-  </div>
-  <div class="grid">
-    <div class="f"><b>📐 Vuông vắn như máy scan</b><span class="muted">Tự nhận 4 góc, nắn phối cảnh đúng tỷ lệ, tự khớp khổ A4.</span></div>
-    <div class="f"><b>📖 Nắn giấy cong</b><span class="muted">Mép quăn, gáy sách, giấy gợn sóng được trải phẳng.</span></div>
-    <div class="f"><b>☀️ Giấy trắng, chữ rõ</b><span class="muted">Khử bóng, làm sáng – giữ nguyên nét mực, dấu đỏ, chữ ký.</span></div>
-    <div class="f"><b>🔒 Riêng tư, offline</b><span class="muted">Không đăng nhập, không cloud. Dữ liệu chỉ nằm trên máy bạn.</span></div>
-  </div>
-  <div class="card warn" style="margin-top:16px">
-    ⚠️ Đây là trang giới thiệu. <b>APP scan PDF là ứng dụng điện thoại</b>, không chạy trên trình duyệt web.
-  </div>
-</main>
-<footer>
-  <b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026
-</footer>
-<script>
-  const repo = (window.APP_REPO || "").trim();
-  const apk = document.getElementById("apk"), gh = document.getElementById("gh"), st = document.getElementById("status");
-  if (!repo) {
-    apk.removeAttribute("href"); gh.removeAttribute("href");
-    apk.style.opacity = gh.style.opacity = .5;
-    st.textContent = "Chưa cấu hình repo: sửa file site/config.js (APP_REPO = \"tài-khoản/tên-repo\").";
-  } else {
-    apk.href = "https://github.com/" + repo + "/releases/latest/download/app-release.apk";
-    gh.href = "https://github.com/" + repo + "/releases";
-    fetch("https://api.github.com/repos/" + repo + "/releases/latest")
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
-      .then(j => { st.textContent = "Bản mới nhất: " + j.name + " – " + new Date(j.published_at).toLocaleString("vi-VN"); })
-      .catch(() => { st.textContent = "Chưa có bản build nào. Bản APK sẽ xuất hiện sau khi GitHub Actions build thành công."; });
-  }
-</script>
+<div id="app">
+
+  <!-- ===================== TRANG CHỦ ===================== -->
+  <section id="home" class="screen active">
+    <header class="brand">
+      <img class="logo" src="icons/icon-192.png" alt="APP scan PDF">
+      <div class="bt"><h1>APP scan PDF</h1><p>Scan tài liệu – xuất PDF sắc nét</p></div>
+      <button class="icon-btn light" data-go="settings" aria-label="Cài đặt">⚙️</button>
+    </header>
+    <main class="pad">
+      <button class="big-btn" id="btnScan">
+        <span class="bi">📷</span>
+        <span class="bl"><b>Scan tài liệu</b><small>Tự nhận 4 góc • nắn phẳng • làm sáng</small></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="tiles">
+        <label class="tile"><input type="file" id="fileImport" accept="image/*" multiple hidden>
+          <span class="ti g-teal">🖼️</span>Chọn ảnh</label>
+        <button class="tile" data-go="library"><span class="ti g-amber">📁</span>Tài liệu<br>đã lưu</button>
+        <button class="tile" data-go="settings"><span class="ti g-coral">⚙️</span>Cài đặt</button>
+      </div>
+      <div id="installBox" class="note hidden">
+        <b>📲 Cài APP scan PDF lên màn hình chính</b>
+        <span id="installText">Mở nhanh như app, dùng được khi không có mạng.</span>
+        <button id="btnInstall" class="btn small">Cài đặt app</button>
+      </div>
+      <h3 id="recentTitle" class="hidden">Gần đây</h3>
+      <div id="recent"></div>
+      <div class="note teal">🔒 Dữ liệu chỉ lưu trên điện thoại này. Không cần đăng nhập, không gửi ảnh lên máy chủ. Chỉ chia sẻ khi bạn bấm Chia sẻ.</div>
+    </main>
+    <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
+  </section>
+
+  <!-- ===================== CAMERA ===================== -->
+  <section id="camera" class="screen dark">
+    <div class="cam-top">
+      <button class="icon-btn light" id="camClose" aria-label="Đóng">✕</button>
+      <div class="sp"></div>
+      <button class="icon-btn light" id="camTorch" aria-label="Đèn" hidden>🔦</button>
+      <button class="icon-btn light" id="camGrid" aria-label="Lưới">▦</button>
+      <button class="pill" id="camAuto">Tự động</button>
+    </div>
+    <div class="cam-view" id="camView">
+      <video id="video" playsinline muted autoplay></video>
+      <canvas id="overlay"></canvas>
+      <div class="level hidden" id="level"><div class="bub"><i></i></div><span>Máy song song giấy</span></div>
+      <div class="flash" id="camFlash"></div>
+    </div>
+    <div class="cam-hint" id="camHint">Đang mở camera…</div>
+    <div class="cam-bottom">
+      <label class="round-btn"><input type="file" id="camImport" accept="image/*" multiple hidden>🖼️</label>
+      <button class="shutter" id="shutter" aria-label="Chụp"><span>📷</span></button>
+      <button class="thumb-btn" id="camDone"><img id="camThumb" alt=""><b id="camCount">0</b><small>Xong</small></button>
+    </div>
+  </section>
+
+  <!-- ===================== TRANG TÀI LIỆU ===================== -->
+  <section id="doc" class="screen">
+    <div class="bar">
+      <button class="icon-btn" data-back aria-label="Quay lại">‹</button>
+      <h2 id="docName" class="grow ellipsis">Tài liệu</h2>
+      <button class="icon-btn" id="docRename" aria-label="Đổi tên">✏️</button>
+    </div>
+    <main class="pad" id="pageList"></main>
+    <div class="actions">
+      <button class="btn outline" id="docAddCam">📷 Chụp</button>
+      <label class="btn outline sq"><input type="file" id="docImport" accept="image/*" multiple hidden>🖼️</label>
+      <button class="btn" id="docExport">⬆️ Xuất / Gửi</button>
+    </div>
+  </section>
+
+  <!-- ===================== CHỈNH SỬA ===================== -->
+  <section id="editor" class="screen">
+    <div class="bar">
+      <button class="icon-btn" id="edBack" aria-label="Xong">‹</button>
+      <h2 class="grow" id="edTitle">Trang 1</h2>
+      <button class="icon-btn" id="edUndo" aria-label="Hoàn tác">↶</button>
+      <button class="icon-btn" id="edRedo" aria-label="Làm lại">↷</button>
+    </div>
+    <div class="ed-view" id="edView">
+      <canvas id="edCanvas"></canvas>
+      <canvas id="edGrid" class="hidden"></canvas>
+      <div class="ed-corner hidden" id="edCorner"><canvas id="cornerCanvas"></canvas><canvas id="loupe" class="hidden"></canvas></div>
+      <div class="spinner hidden" id="edSpin"></div>
+      <div class="ed-tools">
+        <button class="chip-btn" id="edCompare">⇆ Giữ để so sánh</button>
+        <button class="chip-btn" id="edGridBtn">▦ Lưới</button>
+      </div>
+    </div>
+    <div class="ed-panel" id="edPanel"></div>
+    <nav class="tabs">
+      <button data-tab="crop" class="on">✂️<span>Góc / Crop</span></button>
+      <button data-tab="light">☀️<span>Ánh sáng</span></button>
+      <button data-tab="color">🎨<span>Chế độ màu</span></button>
+    </nav>
+  </section>
+
+  <!-- ===================== XUẤT FILE ===================== -->
+  <section id="export" class="screen">
+    <div class="bar"><button class="icon-btn" data-back aria-label="Quay lại">‹</button><h2 class="grow">Xuất file</h2></div>
+    <main class="pad">
+      <label class="lbl">Định dạng</label>
+      <div class="chips" id="exFormat">
+        <button data-v="pdf" class="on">PDF</button><button data-v="jpg">JPG</button><button data-v="png">PNG</button><button data-v="orig">Ảnh gốc</button>
+      </div>
+      <label class="lbl" for="exName">Tên file</label>
+      <input id="exName" class="input" placeholder="Tên file (có thể dùng tiếng Việt)">
+      <div id="exPdfOpts">
+        <label class="lbl">Khổ giấy PDF</label>
+        <div class="chips" id="exSize"><button data-v="a4" class="on">A4</button><button data-v="auto">Theo tài liệu</button><button data-v="letter">Letter</button><button data-v="a5">A5</button></div>
+        <label class="lbl">Chất lượng ảnh trong PDF</label>
+        <div class="chips" id="exPdfQ"><button data-v="95" class="on">Cao (JPEG 95)</button><button data-v="85">Vừa (85)</button><button data-v="lossless">Không nén mất dữ liệu</button></div>
+      </div>
+      <div id="exJpgOpts" class="hidden">
+        <label class="lbl">Chất lượng JPG: <b id="exJpgQv">95</b></label>
+        <input type="range" id="exJpgQ" min="60" max="100" value="95">
+      </div>
+      <p class="muted" id="exNote">Ảnh xuất dùng độ phân giải đầy đủ của ảnh chụp, mã hoá 1 lần.</p>
+      <div id="exResult"></div>
+    </main>
+    <div class="actions">
+      <button class="btn outline" id="exSave">💾 Lưu về máy</button>
+      <button class="btn" id="exShare">📤 Chia sẻ</button>
+    </div>
+  </section>
+
+  <!-- ===================== THƯ VIỆN ===================== -->
+  <section id="library" class="screen">
+    <div class="bar"><button class="icon-btn" data-back aria-label="Quay lại">‹</button><h2 class="grow">Tài liệu đã lưu</h2></div>
+    <main class="pad">
+      <input id="libSearch" class="input" placeholder="🔍 Tìm theo tên">
+      <div id="libList"></div>
+    </main>
+  </section>
+
+  <!-- ===================== CÀI ĐẶT ===================== -->
+  <section id="settings" class="screen">
+    <div class="bar"><button class="icon-btn" data-back aria-label="Quay lại">‹</button><h2 class="grow">Cài đặt</h2></div>
+    <main class="pad">
+      <div class="card">
+        <label class="row-sw"><span><b>Tự động chụp</b><small>Chụp khi 4 góc ổn định. Luôn có nút chụp tay.</small></span><input type="checkbox" id="setAuto"></label>
+        <label class="row-sw"><span><b>Lưới căn chỉnh</b><small>Lưới 3×3, khung A4, thước thăng bằng.</small></span><input type="checkbox" id="setGrid"></label>
+        <label class="lbl">Chế độ màu mặc định</label>
+        <div class="chips" id="setMode"></div>
+      </div>
+      <div class="card">
+        <b>Lưu trữ trên máy</b>
+        <p class="muted" id="storageInfo">…</p>
+        <button class="btn outline small" id="btnPersist">Giữ dữ liệu lâu dài</button>
+      </div>
+      <div class="card">
+        <b>Ứng dụng Android</b>
+        <p class="muted">Bản cài APK (có thêm OCR). <a href="about.html">Trang tải APK & giới thiệu ›</a></p>
+      </div>
+      <p class="muted center">Phiên bản web 0.3.0</p>
+    </main>
+    <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
+  </section>
+</div>
+
+<div id="toast"></div>
+<div id="modal" class="modal hidden"><div class="sheet" id="sheet"></div></div>
+
+<script src="config.js"></script>
+<script src="cv.js"></script>
+<script src="pdf.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

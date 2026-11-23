@@ -29,7 +29,10 @@ REQUIRED = [
     "scripts/check_files.py",
     "native_templates/android/MainActivity.kt", "native_templates/android/proguard-rules.pro",
     "native_templates/ios/Podfile", "native_templates/ios/SdsStoragePlugin.swift.txt",
-    "site/index.html", "site/config.js",
+    "site/index.html", "site/config.js", "site/about.html", "site/app.js", "site/app.css",
+    "site/cv.js", "site/worker.js", "site/pdf.js", "site/sw.js", "site/manifest.webmanifest",
+    "site/icons/icon-192.png", "site/icons/icon-512.png", "site/icons/icon-maskable-512.png",
+    "site/icons/apple-touch-icon.png",
 ]
 SKIP_DIRS = {".git", ".dart_tool", "build", "__pycache__", ".idea"}
 # android/ và ios/ ở GỐC dự án do flutter create sinh ra trên CI – không phải native_templates/
@@ -174,6 +177,29 @@ def main():
     for s in re.findall(r"(scripts/[\w./-]+)", wf + (ROOT / "vercel.json").read_text(encoding="utf-8")):
         if s not in fileset:
             errors.append(f"CI/Vercel gọi tới script không tồn tại: {s}")
+
+    # Cú pháp JavaScript của web app (nếu máy có Node.js)
+    import shutil, subprocess
+    node = shutil.which("node")
+    if node:
+        for f in [x for x in files if x.startswith("site/") and x.endswith(".js")]:
+            r = subprocess.run([node, "--check", str(ROOT / f)], capture_output=True, text=True)
+            if r.returncode != 0:
+                errors.append(f"{f}: lỗi cú pháp JS – {r.stderr.strip().splitlines()[-1] if r.stderr.strip() else ''}")
+    else:
+        warns.append("Không có Node.js – bỏ qua kiểm tra cú pháp JS")
+    # Mọi file mà sw.js lưu offline phải tồn tại
+    sw = (ROOT / "site/sw.js").read_text(encoding="utf-8") if "site/sw.js" in fileset else ""
+    m = re.search(r"SHELL\s*=\s*\[([^\]]*)\]", sw)
+    for item in re.findall(r"'([^']+)'", m.group(1) if m else ""):
+        if item not in ("./",) and f"site/{item}" not in fileset:
+            errors.append(f"site/sw.js lưu offline file không tồn tại: {item}")
+    # Mọi tài nguyên site/index.html tham chiếu phải tồn tại
+    if "site/index.html" in fileset:
+        html = (ROOT / "site/index.html").read_text(encoding="utf-8")
+        for ref in re.findall(r'(?:src|href)="([^"#:]+)"', html):
+            if f"site/{ref}" not in fileset:
+                errors.append(f"site/index.html tham chiếu file không tồn tại: {ref}")
 
     tests = [f for f in files if f.startswith("test/") and f.endswith("_test.dart")]
     if not tests:

@@ -1,20 +1,20 @@
 # Danh sách file dự án (tự sinh bởi scripts/check_files.py --write)
 
-Tổng: **75 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
+Tổng: **94 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
 chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Actions.
 
 | File | Byte | SHA-256 (12 ký tự đầu) |
 |---|---:|---|
 | `.github/workflows/build.yml` | 2845 | fa2dbbe5aacf |
 | `.gitignore` | 236 | 0aa3a213b420 |
-| `README.md` | 4911 | 7aceef811636 |
+| `README.md` | 5066 | a2b2235a5580 |
 | `UPLOAD_CHECKLIST.md` | 1127 | 09deabe9bf0f |
 | `analysis_options.yaml` | 121 | 0c2115428f67 |
 | `assets/fonts/DejaVu-LICENSE.txt` | 3859 | 63d3ba759d12 |
 | `assets/fonts/DejaVuSans.ttf` | 759720 | ae7b7855e115 |
 | `docs/BUILD.md` | 1827 | eb6987aa5791 |
 | `docs/DEPENDENCIES.md` | 2040 | 0dad5eb5d8a7 |
-| `docs/DEPLOY_VERCEL.md` | 1432 | c061198eba0c |
+| `docs/DEPLOY_VERCEL.md` | 1611 | 637fe82187a2 |
 | `docs/GEOMETRY_VALIDATION.md` | 5666 | 98bcacbe1767 |
 | `docs/REQUIREMENTS_MATRIX.md` | 7770 | aa5a590cdf03 |
 | `docs/RISKS.md` | 3435 | e031421d8368 |
@@ -25,10 +25,12 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `docs/img/curve_compare.jpg` | 701377 | 1823be26fd12 |
 | `docs/img/enh_compare.jpg` | 318514 | bfb71b852dff |
 | `docs/img/giao_dien_moi.png` | 790395 | bfb561179d33 |
-| `lib/core/dewarp.dart` | 26496 | 1d215e7d4672 |
+| `docs/img/web_curved_result.jpg` | 72004 | 413a853162fe |
+| `docs/img/webapp_screens.jpg` | 251022 | 99216eb48491 |
+| `lib/core/dewarp.dart` | 26477 | c1552a91bdce |
 | `lib/core/geometry.dart` | 10810 | 0a364ff17d87 |
 | `lib/core/ids.dart` | 1135 | 54439cceb7e5 |
-| `lib/core/rectify.dart` | 15987 | 36033386e47f |
+| `lib/core/rectify.dart` | 16703 | f41dbb511765 |
 | `lib/main.dart` | 802 | c47cc944d34c |
 | `lib/models/document.dart` | 4651 | 59e24f428391 |
 | `lib/models/edit_params.dart` | 4273 | 45311dd06144 |
@@ -59,11 +61,23 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `native_templates/ios/SdsStoragePlugin.swift.txt` | 941 | 5ac56c4f8249 |
 | `pubspec.yaml` | 886 | f087b788b14b |
 | `scripts/bootstrap.sh` | 524 | 2507b421be43 |
-| `scripts/check_files.py` | 8573 | 9eb34fc514bc |
+| `scripts/check_files.py` | 10231 | 3f68356f4921 |
 | `scripts/patch_platforms.py` | 4757 | 8130769c9d97 |
 | `scripts/vercel_build.sh` | 513 | 77b8a8ac32b7 |
+| `site/about.html` | 4851 | 896befb1d84b |
+| `site/app.css` | 10908 | 2acc9ae64593 |
+| `site/app.js` | 51806 | 44cddd0852a2 |
 | `site/config.js` | 302 | 637778fd9257 |
-| `site/index.html` | 4797 | 2d033b0b4217 |
+| `site/cv.js` | 55479 | 9133e37ecb2a |
+| `site/icons/apple-touch-icon.png` | 3727 | 94d53bf5b825 |
+| `site/icons/icon-192.png` | 4112 | bfa8497b872d |
+| `site/icons/icon-512.png` | 13041 | e37dc86f955c |
+| `site/icons/icon-maskable-512.png` | 13559 | 7778cf5630d1 |
+| `site/index.html` | 9856 | 487ef7364f15 |
+| `site/manifest.webmanifest` | 638 | 7d4c29c55875 |
+| `site/pdf.js` | 3873 | 759ed9f98017 |
+| `site/sw.js` | 1189 | ef2b997845df |
+| `site/worker.js` | 3036 | b8f65ae4255f |
 | `test/detector_test.dart` | 2415 | ef8b75cb035d |
 | `test/dewarp_test.dart` | 3939 | 724222a0b388 |
 | `test/enhancer_test.dart` | 3096 | 3d8405cf6514 |
@@ -76,7 +90,12 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `tools/sim/curve.py` | 19893 | 008e72aa0bb9 |
 | `tools/sim/deskew.py` | 1482 | c19b0b818d4f |
 | `tools/sim/enhance_check.py` | 4511 | 95f1fa5c6df4 |
+| `tools/sim/gen_cases.py` | 931 | 01a3adadb011 |
 | `tools/sim/sim.py` | 13240 | 31ef04c79519 |
 | `tools/sim/viz.py` | 1818 | 4b1e51d5284c |
 | `tools/sim/viz_curve.py` | 1465 | 7278513221c0 |
-| `vercel.json` | 267 | 7c88c84726c2 |
+| `tools/web_e2e/README.md` | 868 | 3c062fb1e550 |
+| `tools/web_e2e/e2e_camera.py` | 4218 | 0eb85e92ccbf |
+| `tools/web_e2e/e2e_import_curved.py` | 1520 | ee4ea5dfe1c9 |
+| `tools/web_e2e/node_pipeline.js` | 977 | a9ab7dfbc7ff |
+| `vercel.json` | 591 | cd8b896a719e |

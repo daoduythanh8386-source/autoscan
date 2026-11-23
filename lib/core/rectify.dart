@@ -69,6 +69,40 @@ Pt? _intersect((Pt, Pt) l1, (Pt, Pt) l2) {
   return Pt(c1.x + d1.x * s, c1.y + d1.y * s);
 }
 
+/// Chọn biên mép giấy trong 1 mặt cắt: biên NGOÀI CÙNG (chỉ số nhỏ = phía ngoài)
+/// đúng chiều sáng/tối và ≥ 50% biên mạnh nhất – tránh bám vào dòng chữ sát mép.
+/// Trả về vị trí (có phần lẻ) hoặc null.
+double? pickEdge(Float64List grad, int sign) {
+  final n = grad.length;
+  var gmax = 4.0;
+  for (var o = 2; o < n - 2; o++) {
+    final v = grad[o] * sign;
+    if (v > gmax) gmax = v;
+  }
+  if (gmax <= 4) return null;
+  for (var o = 2; o < n - 2; o++) {
+    final v = grad[o] * sign;
+    if (v >= 0.5 * gmax && v >= grad[o - 1] * sign && v >= grad[o + 1] * sign) {
+      final a = grad[o - 1] * sign, c = grad[o + 1] * sign;
+      final den = a - 2 * v + c;
+      final sub = (den.abs() > 1e-9 ? 0.5 * (a - c) / den : 0.0).clamp(-0.5, 0.5);
+      return o + sub;
+    }
+  }
+  return null;
+}
+
+/// +1 nếu phía trong (giấy) sáng hơn phía ngoài, ngược lại -1.
+int insideSign(List<Float64List> profiles, int steps) {
+  var d = 0.0;
+  for (final p in profiles) {
+    for (var o = 1; o <= steps; o++) {
+      d += p[steps + o] - p[steps - o];
+    }
+  }
+  return d >= 0 ? 1 : -1;
+}
+
 /// [gray] ảnh xám độ phân giải đầy đủ (w x h); [q] góc thô (cùng hệ toạ độ).
 RefineResult refineQuad(Uint8List gray, int w, int h, Quad q) {
   final diag = math.sqrt(w * w + h * h.toDouble());
@@ -91,46 +125,36 @@ RefineResult refineQuad(Uint8List gray, int w, int h, Quad q) {
       ny = -ny;
     }
     final k = (len / 8).clamp(20, 200).toInt();
-    final cand = {1: <Pt>[], -1: <Pt>[]};
-    final score = {1: 0.0, -1: 0.0};
-    final prof = Float64List(2 * steps + 1);
-    final grad = Float64List(2 * steps + 1);
+    final profs = <Float64List>[];
+    final bases = <Pt>[];
     for (var j = 0; j < k; j++) {
       final s = 0.08 + 0.84 * j / (k - 1);
       final bx = p0.x + (p1.x - p0.x) * s, by = p0.y + (p1.y - p0.y) * s;
+      final pr = Float64List(2 * steps + 1);
       for (var o = -steps; o <= steps; o++) {
         final px = bx + nx * o, py = by + ny * o;
         // Trung bình 3 mẫu dọc theo cạnh để giảm nhiễu.
-        prof[o + steps] = (_sample(gray, w, h, px - tx * 1.5, py - ty * 1.5) +
+        pr[o + steps] = (_sample(gray, w, h, px - tx * 1.5, py - ty * 1.5) +
                 _sample(gray, w, h, px, py) +
                 _sample(gray, w, h, px + tx * 1.5, py + ty * 1.5)) /
             3;
       }
-      for (var o = 1; o < prof.length - 1; o++) {
-        grad[o] = (prof[o + 1] - prof[o - 1]) / 2;
-      }
-      for (final sign in const [1, -1]) {
-        var bi = -1;
-        var bv = 4.0; // ngưỡng gradient tối thiểu
-        for (var o = 2; o < prof.length - 2; o++) {
-          final v = grad[o] * sign;
-          if (v > bv) {
-            bv = v;
-            bi = o;
-          }
-        }
-        if (bi < 0) continue;
-        final a = grad[bi - 1] * sign, b = bv, c = grad[bi + 1] * sign;
-        final den = a - 2 * b + c;
-        var sub = den.abs() > 1e-9 ? 0.5 * (a - c) / den : 0.0;
-        sub = sub.clamp(-0.5, 0.5);
-        final d = (bi - steps) + sub;
-        cand[sign]!.add(Pt(bx + nx * d, by + ny * d));
-        score[sign] = score[sign]! + b;
-      }
+      profs.add(pr);
+      bases.add(Pt(bx, by));
     }
-    final sign = score[1]! >= score[-1]! ? 1 : -1;
-    var pts = cand[sign]!;
+    final sign = insideSign(profs, steps);
+    final grad = Float64List(2 * steps + 1);
+    var pts = <Pt>[];
+    for (var j = 0; j < k; j++) {
+      final pr = profs[j];
+      for (var o = 1; o < pr.length - 1; o++) {
+        grad[o] = (pr[o + 1] - pr[o - 1]) / 2;
+      }
+      final e = pickEdge(grad, sign);
+      if (e == null) continue;
+      final d = e - steps;
+      pts.add(Pt(bases[j].x + nx * d, bases[j].y + ny * d));
+    }
     if (pts.length < k * 0.4) continue;
     var line = _fitLine(pts);
     for (var it = 0; it < 3 && line != null; it++) {

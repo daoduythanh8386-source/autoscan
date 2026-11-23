@@ -1,7 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "echo 'APP scan PDF là app Flutter – Vercel chỉ phục vụ trang tải trong site/'",
+  "installCommand": "echo 'APP scan PDF: web app tĩnh trong site/ (bản Flutter build trên GitHub Actions)'",
   "buildCommand": "sh scripts/vercel_build.sh",
-  "outputDirectory": "site"
+  "outputDirectory": "site",
+  "headers": [
+    { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/(.*)", "headers": [
+      { "key": "Permissions-Policy", "value": "camera=(self), accelerometer=(self), gyroscope=(self)" },
+      { "key": "X-Content-Type-Options", "value": "nosniff" }
+    ] }
+  ]
 }

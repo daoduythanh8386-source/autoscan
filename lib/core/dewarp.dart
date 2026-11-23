@@ -152,12 +152,12 @@ List<EdgeSample> _probeEdges(Uint8List g, int w, int h, Quad q, SideCoefs pred, 
   final hu = unitToImage(q);
   final cen = hu.apply(0.5, 0.5);
   final steps = r.floor();
-  final prof = Float64List(2 * steps + 1), grad = Float64List(2 * steps + 1);
+  final grad = Float64List(2 * steps + 1);
   final out = <EdgeSample>[];
   for (final s in Side.values) {
     final c = pred[s]!;
-    final found = {1: <EdgeSample>[], -1: <EdgeSample>[]};
-    final score = {1: 0.0, -1: 0.0};
+    final profs = <Float64List>[];
+    final info = <(double, Pt, double, double)>[];
     double? flip;
     for (var j = 0; j < k; j++) {
       final t = t0 + (t1 - t0) * j / (k - 1);
@@ -173,33 +173,28 @@ List<EdgeSample> _probeEdges(Uint8List g, int w, int h, Quad q, SideCoefs pred, 
       flip ??= ((cen.x - p.x) * nx + (cen.y - p.y) * ny) < 0 ? -1.0 : 1.0;
       nx *= flip;
       ny *= flip;
+      final pr = Float64List(2 * steps + 1);
       for (var o = -steps; o <= steps; o++) {
-        prof[o + steps] = _sampleGray(g, w, h, p.x + nx * o, p.y + ny * o);
+        pr[o + steps] = _sampleGray(g, w, h, p.x + nx * o, p.y + ny * o);
       }
-      for (var o = 1; o < prof.length - 1; o++) {
-        grad[o] = (prof[o + 1] - prof[o - 1]) / 2;
-      }
-      for (final sg in const [1, -1]) {
-        var bi = -1;
-        var bv = 4.0;
-        for (var o = 2; o < prof.length - 2; o++) {
-          final v = grad[o] * sg;
-          if (v > bv) {
-            bv = v;
-            bi = o;
-          }
-        }
-        if (bi < 0) continue;
-        final a = grad[bi - 1] * sg, cc = grad[bi + 1] * sg;
-        final den = a - 2 * bv + cc;
-        final sub = (den.abs() > 1e-9 ? 0.5 * (a - cc) / den : 0.0).clamp(-0.5, 0.5);
-        final d = bi - steps + sub;
-        found[sg]!.add(EdgeSample(s, t, Pt(p.x + nx * d, p.y + ny * d)));
-        score[sg] = score[sg]! + bv;
-      }
+      profs.add(pr);
+      info.add((t, p, nx, ny));
     }
-    final sg = score[1]! >= score[-1]! ? 1 : -1;
-    if (found[sg]!.length >= k * 0.4) out.addAll(found[sg]!);
+    if (profs.isEmpty) continue;
+    final sign = insideSign(profs, steps);
+    final found = <EdgeSample>[];
+    for (var j = 0; j < profs.length; j++) {
+      final pr = profs[j];
+      for (var o = 1; o < pr.length - 1; o++) {
+        grad[o] = (pr[o + 1] - pr[o - 1]) / 2;
+      }
+      final e = pickEdge(grad, sign);
+      if (e == null) continue;
+      final d = e - steps;
+      final (t, p, nx, ny) = info[j];
+      found.add(EdgeSample(s, t, Pt(p.x + nx * d, p.y + ny * d)));
+    }
+    if (found.length >= k * 0.4) out.addAll(found);
   }
   return out;
 }
@@ -649,15 +644,18 @@ CylinderModel? buildCylinder({
   // Góc ở đầu quăn xác định chính xác điểm kết thúc trang.
   final bl = corners.pts[_cornerIndex(names[2], names[3])];
   final br = corners.pts[_cornerIndex(names[1], names[2])];
-  var yEnd = 0.0;
+  // Điểm kết thúc trang: góc GẦN hơn trong 2 góc đầu quăn (góc kia có thể dò lố
+  // ra nền/bóng) → không để lại dải nền ở mép trang.
+  final ends = <double>[];
   for (final (c, x0) in [(bl, 0.0), (br, 1.0)]) {
     final r = backProject(c, x0);
     if (r != null) {
       ys.add(r.$1);
       zs.add(r.$2);
-      yEnd = math.max(yEnd, r.$1);
+      ends.add(r.$1);
     }
   }
+  final yEnd = ends.isEmpty ? 0.0 : ends.reduce(math.min);
   if (ys.length < 30 || yEnd <= 0) return null;
   final yMax = yEnd;
   final flat = [for (var i = 0; i < ys.length; i++) if (ys[i] < yMax * 0.4) zs[i]]..sort();
