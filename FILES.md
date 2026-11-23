@@ -1,0 +1,82 @@
+# Danh sách file dự án (tự sinh bởi scripts/check_files.py --write)
+
+Tổng: **75 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
+chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Actions.
+
+| File | Byte | SHA-256 (12 ký tự đầu) |
+|---|---:|---|
+| `.github/workflows/build.yml` | 2845 | fa2dbbe5aacf |
+| `.gitignore` | 236 | 0aa3a213b420 |
+| `README.md` | 4911 | 7aceef811636 |
+| `UPLOAD_CHECKLIST.md` | 1127 | 09deabe9bf0f |
+| `analysis_options.yaml` | 121 | 0c2115428f67 |
+| `assets/fonts/DejaVu-LICENSE.txt` | 3859 | 63d3ba759d12 |
+| `assets/fonts/DejaVuSans.ttf` | 759720 | ae7b7855e115 |
+| `docs/BUILD.md` | 1827 | eb6987aa5791 |
+| `docs/DEPENDENCIES.md` | 2040 | 0dad5eb5d8a7 |
+| `docs/DEPLOY_VERCEL.md` | 1432 | c061198eba0c |
+| `docs/GEOMETRY_VALIDATION.md` | 5666 | 98bcacbe1767 |
+| `docs/REQUIREMENTS_MATRIX.md` | 7770 | aa5a590cdf03 |
+| `docs/RISKS.md` | 3435 | e031421d8368 |
+| `docs/TEST_PLAN.md` | 2945 | c0b2b274ed28 |
+| `docs/TEST_REPORT.md` | 1306 | c02b321fe368 |
+| `docs/USER_GUIDE.md` | 2515 | 50d516f422c2 |
+| `docs/img/compare_tilt40.jpg` | 458342 | c5e78e9172c9 |
+| `docs/img/curve_compare.jpg` | 701377 | 1823be26fd12 |
+| `docs/img/enh_compare.jpg` | 318514 | bfb71b852dff |
+| `docs/img/giao_dien_moi.png` | 790395 | bfb561179d33 |
+| `lib/core/dewarp.dart` | 26496 | 1d215e7d4672 |
+| `lib/core/geometry.dart` | 10810 | 0a364ff17d87 |
+| `lib/core/ids.dart` | 1135 | 54439cceb7e5 |
+| `lib/core/rectify.dart` | 15987 | 36033386e47f |
+| `lib/main.dart` | 802 | c47cc944d34c |
+| `lib/models/document.dart` | 4651 | 59e24f428391 |
+| `lib/models/edit_params.dart` | 4273 | 45311dd06144 |
+| `lib/screens/camera_screen.dart` | 24583 | 97a0101fbf3d |
+| `lib/screens/editor_screen.dart` | 17403 | 78f7ec8e20c5 |
+| `lib/screens/export_screen.dart` | 12701 | e5ce3ee88114 |
+| `lib/screens/home_screen.dart` | 7789 | 5d0309ecfc79 |
+| `lib/screens/import_flow.dart` | 3629 | 3716a40b46f7 |
+| `lib/screens/library_screen.dart` | 9892 | a02d4b87fe75 |
+| `lib/screens/page_manager_screen.dart` | 9002 | 460baeb3f201 |
+| `lib/screens/settings_screen.dart` | 4313 | 33c077bcf31e |
+| `lib/services/export/export_core.dart` | 9903 | 3f278875384b |
+| `lib/services/export/export_service.dart` | 12417 | 8b54ffdfb185 |
+| `lib/services/imaging/document_detector.dart` | 13566 | f268abdb7444 |
+| `lib/services/imaging/enhancer.dart` | 14031 | 195c0e02d955 |
+| `lib/services/imaging/frame_analyzer.dart` | 2852 | 9b8783146baa |
+| `lib/services/imaging/pipeline.dart` | 12415 | 61b0437d1d7e |
+| `lib/services/imaging/quality.dart` | 3898 | bafb1c616c74 |
+| `lib/services/ocr/ocr_service.dart` | 1773 | 013bc70f4d4c |
+| `lib/services/settings_service.dart` | 2568 | 9cf77cba508b |
+| `lib/services/storage/app_storage.dart` | 13501 | 8142036fd044 |
+| `lib/widgets/brand.dart` | 10376 | 3908319bd892 |
+| `lib/widgets/common.dart` | 3807 | a5c95d8a7aca |
+| `lib/widgets/corner_editor.dart` | 5803 | 1dff226813f2 |
+| `native_templates/android/MainActivity.kt` | 1176 | 19af0178b5b6 |
+| `native_templates/android/proguard-rules.pro` | 347 | 506b554210db |
+| `native_templates/ios/Podfile` | 1357 | 95c54bd9ce4c |
+| `native_templates/ios/SdsStoragePlugin.swift.txt` | 941 | 5ac56c4f8249 |
+| `pubspec.yaml` | 886 | f087b788b14b |
+| `scripts/bootstrap.sh` | 524 | 2507b421be43 |
+| `scripts/check_files.py` | 8573 | 9eb34fc514bc |
+| `scripts/patch_platforms.py` | 4757 | 8130769c9d97 |
+| `scripts/vercel_build.sh` | 513 | 77b8a8ac32b7 |
+| `site/config.js` | 302 | 637778fd9257 |
+| `site/index.html` | 4797 | 2d033b0b4217 |
+| `test/detector_test.dart` | 2415 | ef8b75cb035d |
+| `test/dewarp_test.dart` | 3939 | 724222a0b388 |
+| `test/enhancer_test.dart` | 3096 | 3d8405cf6514 |
+| `test/export_test.dart` | 2083 | a75c270eaa3e |
+| `test/geometry_test.dart` | 1842 | 5e843758c861 |
+| `test/rectify_test.dart` | 5700 | 22c48480c50f |
+| `test/widget_test.dart` | 370 | 05198dec972d |
+| `tools/sim/compare_all.py` | 1840 | 652a3a6d7e45 |
+| `tools/sim/curl3d.py` | 9844 | cfd5c6443f35 |
+| `tools/sim/curve.py` | 19893 | 008e72aa0bb9 |
+| `tools/sim/deskew.py` | 1482 | c19b0b818d4f |
+| `tools/sim/enhance_check.py` | 4511 | 95f1fa5c6df4 |
+| `tools/sim/sim.py` | 13240 | 31ef04c79519 |
+| `tools/sim/viz.py` | 1818 | 4b1e51d5284c |
+| `tools/sim/viz_curve.py` | 1465 | 7278513221c0 |
+| `vercel.json` | 267 | 7c88c84726c2 |

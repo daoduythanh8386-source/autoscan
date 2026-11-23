@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo 'APP scan PDF là app Flutter – Vercel chỉ phục vụ trang tải trong site/'",
+  "buildCommand": "sh scripts/vercel_build.sh",
+  "outputDirectory": "site"
+}
