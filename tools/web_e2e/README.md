@@ -8,3 +8,11 @@
 6. `python3 tools/web_e2e/e2e_safari_fallback.py`: ép `createImageBitmap` lỗi như trên Safari iPhone, kiểm tra đường giải mã dự phòng.
 
 Kết quả lần chạy 2026-11-23: tự chụp sau 2,1 giây; PDF A4 hợp lệ (qpdf, pypdf); dữ liệu còn sau khi tải lại trang; 2 ảnh giấy cong được nắn tự động; không có lỗi JavaScript.
+
+## Bản web 1.0 (luồng như CamScanner)
+`python3 tools/web_e2e/e2e_flow.py` (cần /tmp/doc.y4m, /tmp/e2e/book.jpg, curl.jpg, /tmp/real/real.png) chạy 3 kịch bản:
+1. Camera tự chụp → Cắt → Bộ lọc → Xong → Lưu PDF.
+2. Nhập 2 ảnh giấy cong → Cắt/Lọc từng trang → PDF 2 trang.
+3. Giả lập lỗi `createImageBitmap` của Safari, nhập ảnh thật → PDF.
+
+Kết quả 2026-11-23: cả 3 kịch bản đạt; tới màn Cắt mất 0,4–1,8 giây; tạo PDF mất 0,1 giây; PDF A4 hợp lệ; không có lỗi JavaScript.

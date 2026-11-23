@@ -18,145 +18,127 @@
 <body>
 <div id="app">
 
-  <!-- ===================== TRANG CHỦ ===================== -->
+  <!-- ============ TRANG CHỦ: DANH SÁCH TÀI LIỆU ============ -->
   <section id="home" class="screen active">
     <header class="brand">
-      <img class="logo" src="icons/icon-192.png" alt="APP scan PDF">
+      <img class="logo" src="icons/icon-192.png" alt="">
       <div class="bt"><h1>APP scan PDF</h1><p>Scan tài liệu – xuất PDF sắc nét</p></div>
       <button class="icon-btn light" data-go="settings" aria-label="Cài đặt">⚙️</button>
     </header>
+    <div id="inapp" class="inapp hidden">
+      <b>Đang mở trong Zalo/Facebook</b>
+      <span>Camera có thể không hoạt động ổn định. Bấm <b>⋯</b> → <b>Mở bằng trình duyệt</b> (Safari/Chrome).</span>
+      <button class="mini" id="copyLink">Sao chép link</button>
+    </div>
     <main class="pad">
-      <button class="big-btn" id="btnScan">
-        <span class="bi">📷</span>
-        <span class="bl"><b>Scan tài liệu</b><small>Tự nhận 4 góc • nắn phẳng • làm sáng</small></span>
-        <span class="chev">›</span>
-      </button>
-      <div class="tiles two">
-        <label class="tile"><input type="file" id="fileImport" accept="image/*" multiple hidden>
-          <span class="ti g-teal">🖼️</span>Chọn ảnh</label>
-        <button class="tile" data-go="library"><span class="ti g-amber">📁</span>Tài liệu</button>
+      <input id="search" class="input" placeholder="🔍 Tìm tài liệu" autocomplete="off">
+      <div id="docGrid" class="doc-grid"></div>
+      <div id="empty" class="empty hidden">
+        <div class="empty-ic">📄</div>
+        <b>Chưa có tài liệu</b>
+        <span>Bấm nút camera để scan trang đầu tiên</span>
       </div>
-      <h3 id="recentTitle" class="hidden">Gần đây</h3>
-      <div id="recent" class="home-list"></div>
+      <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
     </main>
-    <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
+    <div class="fab-bar">
+      <label class="fab-side"><input type="file" id="fileImport" accept="image/*" multiple hidden><span>🖼️</span><small>Nhập ảnh</small></label>
+      <button class="fab" id="btnScan" aria-label="Scan">📷</button>
+      <button class="fab-side" data-go="settings"><span>⚙️</span><small>Cài đặt</small></button>
+    </div>
   </section>
 
-  <!-- ===================== CAMERA ===================== -->
+  <!-- ============ CAMERA ============ -->
   <section id="camera" class="screen dark">
     <div class="cam-top">
       <button class="icon-btn light" id="camClose" aria-label="Đóng">✕</button>
       <div class="sp"></div>
-      <button class="icon-btn light" id="camTorch" aria-label="Đèn" hidden>🔦</button>
+      <button class="icon-btn light" id="camTorch" aria-label="Đèn" hidden>⚡</button>
       <button class="icon-btn light" id="camGrid" aria-label="Lưới">▦</button>
-      <button class="pill" id="camAuto">Tự động</button>
+      <button class="pill" id="camAuto">Tự chụp</button>
     </div>
     <div class="cam-view" id="camView">
       <video id="video" playsinline muted autoplay></video>
       <canvas id="overlay"></canvas>
-      <div class="level hidden" id="level"><div class="bub"><i></i></div><span>Máy song song giấy</span></div>
       <div class="flash" id="camFlash"></div>
+      <div class="cam-busy hidden" id="camBusy"><div class="spin"></div></div>
     </div>
     <div class="cam-hint" id="camHint">Đang mở camera…</div>
+    <div class="cam-modes"><button data-m="single" class="on">Một trang</button><button data-m="batch">Nhiều trang</button></div>
     <div class="cam-bottom">
       <label class="round-btn"><input type="file" id="camImport" accept="image/*" multiple hidden>🖼️</label>
-      <button class="shutter" id="shutter" aria-label="Chụp"><span>📷</span></button>
+      <button class="shutter" id="shutter" aria-label="Chụp"><span></span></button>
       <button class="thumb-btn" id="camDone"><img id="camThumb" alt=""><b id="camCount">0</b><small>Xong</small></button>
     </div>
   </section>
 
-  <!-- ===================== TRANG TÀI LIỆU ===================== -->
+  <!-- ============ CẮT (CROP) ============ -->
+  <section id="crop" class="screen dark">
+    <div class="bar dark-bar">
+      <button class="icon-btn light" id="cropBack" aria-label="Quay lại">‹</button>
+      <h2 class="grow" id="cropTitle">Cắt</h2>
+      <span class="muted-l" id="cropCount"></span>
+    </div>
+    <div class="crop-view" id="cropView"><canvas id="cropCanvas"></canvas><canvas id="loupe" class="hidden"></canvas></div>
+    <div class="crop-tools">
+      <button class="ct" id="cropAuto"><i>✨</i><span>Tự động</span></button>
+      <button class="ct" id="cropAll"><i>⛶</i><span>Toàn ảnh</span></button>
+      <button class="ct" id="cropRot"><i>⟳</i><span>Xoay</span></button>
+      <button class="ct" id="cropCurve"><i>📖</i><span>Nắn cong</span></button>
+      <button class="ct" id="cropRetake"><i>🗑</i><span>Bỏ ảnh</span></button>
+    </div>
+    <div class="next-bar"><button class="btn" id="cropNext">Tiếp ›</button></div>
+  </section>
+
+  <!-- ============ BỘ LỌC ============ -->
+  <section id="filter" class="screen">
+    <div class="bar">
+      <button class="icon-btn" id="filBack" aria-label="Quay lại cắt">‹</button>
+      <h2 class="grow" id="filTitle">Bộ lọc</h2>
+      <button class="icon-btn" id="filRot" aria-label="Xoay">⟳</button>
+      <button class="icon-btn" id="filAdj" aria-label="Điều chỉnh">🎚️</button>
+    </div>
+    <div class="fil-view" id="filView"><canvas id="filCanvas"></canvas><div class="spin dark hidden" id="filSpin"></div>
+      <button class="hold" id="filHold">Giữ để xem ảnh gốc</button></div>
+    <div class="adj hidden" id="adjPanel">
+      <div class="slider"><span>Độ sáng</span><input type="range" id="adjB" min="-1" max="1" step="0.05"><output></output></div>
+      <div class="slider"><span>Tương phản</span><input type="range" id="adjC" min="-1" max="1" step="0.05"><output></output></div>
+      <div class="slider"><span>Làm thẳng</span><input type="range" id="adjR" min="-15" max="15" step="0.1"><output></output></div>
+    </div>
+    <div class="fil-strip" id="filStrip"></div>
+    <div class="next-bar"><button class="btn" id="filDone">✓ Xong</button></div>
+  </section>
+
+  <!-- ============ TÀI LIỆU ============ -->
   <section id="doc" class="screen">
     <div class="bar">
-      <button class="icon-btn" data-back aria-label="Quay lại">‹</button>
+      <button class="icon-btn" id="docBack" aria-label="Về danh sách">‹</button>
       <h2 id="docName" class="grow ellipsis">Tài liệu</h2>
       <button class="icon-btn" id="docRename" aria-label="Đổi tên">✏️</button>
     </div>
-    <main class="pad" id="pageList"></main>
-    <div class="actions">
-      <button class="btn outline" id="docAddCam">📷 Chụp</button>
-      <label class="btn outline sq"><input type="file" id="docImport" accept="image/*" multiple hidden>🖼️</label>
-      <button class="btn" id="docExport">⬆️ Xuất / Gửi</button>
+    <main class="pad"><div class="page-grid" id="pageGrid"></div></main>
+    <div class="doc-actions">
+      <button class="da" id="docAdd"><i>📷</i><span>Thêm trang</span></button>
+      <label class="da"><input type="file" id="docImport" accept="image/*" multiple hidden><i>🖼️</i><span>Nhập ảnh</span></label>
+      <button class="da" id="docShare"><i>📤</i><span>Chia sẻ</span></button>
+      <button class="da primary" id="docPdf"><i>📄</i><span>Lưu PDF</span></button>
     </div>
   </section>
 
-  <!-- ===================== CHỈNH SỬA ===================== -->
-  <section id="editor" class="screen">
-    <div class="bar">
-      <button class="icon-btn" id="edBack" aria-label="Xong">‹</button>
-      <h2 class="grow" id="edTitle">Trang 1</h2>
-      <button class="icon-btn" id="edUndo" aria-label="Hoàn tác">↶</button>
-      <button class="icon-btn" id="edRedo" aria-label="Làm lại">↷</button>
-    </div>
-    <div class="ed-view" id="edView">
-      <canvas id="edCanvas"></canvas>
-      <canvas id="edGrid" class="hidden"></canvas>
-      <div class="ed-corner hidden" id="edCorner"><canvas id="cornerCanvas"></canvas><canvas id="loupe" class="hidden"></canvas></div>
-      <div class="spinner hidden" id="edSpin"></div>
-      <div class="ed-tools">
-        <button class="chip-btn" id="edCompare">⇆ Giữ để so sánh</button>
-        <button class="chip-btn" id="edGridBtn">▦ Lưới</button>
-      </div>
-    </div>
-    <div class="ed-panel" id="edPanel"></div>
-    <nav class="tabs">
-      <button data-tab="crop" class="on">✂️<span>Góc / Crop</span></button>
-      <button data-tab="light">☀️<span>Ánh sáng</span></button>
-      <button data-tab="color">🎨<span>Chế độ màu</span></button>
-    </nav>
-  </section>
-
-  <!-- ===================== XUẤT FILE ===================== -->
-  <section id="export" class="screen">
-    <div class="bar"><button class="icon-btn" data-back aria-label="Quay lại">‹</button><h2 class="grow">Xuất file</h2></div>
-    <main class="pad">
-      <label class="lbl">Định dạng</label>
-      <div class="chips" id="exFormat">
-        <button data-v="pdf" class="on">PDF</button><button data-v="jpg">JPG</button><button data-v="png">PNG</button><button data-v="orig">Ảnh gốc</button>
-      </div>
-      <label class="lbl" for="exName">Tên file</label>
-      <input id="exName" class="input" placeholder="Tên file (có thể dùng tiếng Việt)">
-      <div id="exPdfOpts">
-        <label class="lbl">Khổ giấy PDF</label>
-        <div class="chips" id="exSize"><button data-v="a4" class="on">A4</button><button data-v="auto">Theo tài liệu</button><button data-v="letter">Letter</button><button data-v="a5">A5</button></div>
-        <label class="lbl">Chất lượng ảnh trong PDF</label>
-        <div class="chips" id="exPdfQ"><button data-v="95" class="on">Cao (JPEG 95)</button><button data-v="85">Vừa (85)</button><button data-v="lossless">Không nén mất dữ liệu</button></div>
-      </div>
-      <div id="exJpgOpts" class="hidden">
-        <label class="lbl">Chất lượng JPG: <b id="exJpgQv">95</b></label>
-        <input type="range" id="exJpgQ" min="60" max="100" value="95">
-      </div>
-      <p class="muted" id="exNote">Ảnh xuất dùng độ phân giải đầy đủ của ảnh chụp, mã hoá 1 lần.</p>
-      <div id="exResult"></div>
-    </main>
-    <div class="actions">
-      <button class="btn outline" id="exSave">💾 Lưu về máy</button>
-      <button class="btn" id="exShare">📤 Chia sẻ</button>
-    </div>
-  </section>
-
-  <!-- ===================== THƯ VIỆN ===================== -->
-  <section id="library" class="screen">
-    <div class="bar"><button class="icon-btn" data-back aria-label="Quay lại">‹</button><h2 class="grow">Tài liệu đã lưu</h2></div>
-    <main class="pad">
-      <input id="libSearch" class="input" placeholder="🔍 Tìm theo tên">
-      <div id="libList"></div>
-    </main>
-  </section>
-
-  <!-- ===================== CÀI ĐẶT ===================== -->
+  <!-- ============ CÀI ĐẶT ============ -->
   <section id="settings" class="screen">
     <div class="bar"><button class="icon-btn" data-back aria-label="Quay lại">‹</button><h2 class="grow">Cài đặt</h2></div>
     <main class="pad">
       <div class="card">
-        <label class="row-sw"><span><b>Tự động chụp</b><small>Chụp khi 4 góc ổn định. Luôn có nút chụp tay.</small></span><input type="checkbox" id="setAuto"></label>
-        <label class="row-sw"><span><b>Lưới căn chỉnh</b><small>Lưới 3×3, khung A4, thước thăng bằng.</small></span><input type="checkbox" id="setGrid"></label>
-        <label class="lbl">Chế độ màu mặc định</label>
-        <div class="chips" id="setMode"></div>
+        <label class="row-sw"><span><b>Tự động chụp</b><small>Chụp khi 4 góc giấy đứng yên.</small></span><input type="checkbox" id="setAuto"></label>
+        <label class="row-sw"><span><b>Lưới căn chỉnh</b><small>Lưới 3×3 và khung A4 trên camera.</small></span><input type="checkbox" id="setGrid"></label>
+        <label class="lbl">Bộ lọc mặc định</label>
+        <div class="chips" id="setFilter"></div>
+        <label class="lbl">Khổ giấy PDF</label>
+        <div class="chips" id="setPage"></div>
       </div>
-      <p class="muted center">Phiên bản web 0.4.0</p>
+      <p class="muted center">Phiên bản web 1.0 • <a href="about.html">Bản Android (APK)</a></p>
+      <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
     </main>
-    <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
   </section>
 </div>
 
