@@ -1,6 +1,6 @@
 # Danh sách file dự án (tự sinh bởi scripts/check_files.py --write)
 
-Tổng: **94 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
+Tổng: **96 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
 chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Actions.
 
 | File | Byte | SHA-256 (12 ký tự đầu) |
@@ -26,6 +26,7 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `docs/img/enh_compare.jpg` | 318514 | bfb71b852dff |
 | `docs/img/giao_dien_moi.png` | 790395 | bfb561179d33 |
 | `docs/img/web_curved_result.jpg` | 72004 | 413a853162fe |
+| `docs/img/web_v04.jpg` | 246023 | 0750b6d817d3 |
 | `docs/img/webapp_screens.jpg` | 251022 | 99216eb48491 |
 | `lib/core/dewarp.dart` | 26477 | c1552a91bdce |
 | `lib/core/geometry.dart` | 10810 | 0a364ff17d87 |
@@ -65,18 +66,18 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `scripts/patch_platforms.py` | 4757 | 8130769c9d97 |
 | `scripts/vercel_build.sh` | 513 | 77b8a8ac32b7 |
 | `site/about.html` | 4851 | 896befb1d84b |
-| `site/app.css` | 10908 | 2acc9ae64593 |
-| `site/app.js` | 51806 | 44cddd0852a2 |
+| `site/app.css` | 12801 | dddd81d48406 |
+| `site/app.js` | 56156 | b2fa90bff45f |
 | `site/config.js` | 302 | 637778fd9257 |
-| `site/cv.js` | 55479 | 9133e37ecb2a |
+| `site/cv.js` | 55856 | bb709cc14657 |
 | `site/icons/apple-touch-icon.png` | 3727 | 94d53bf5b825 |
 | `site/icons/icon-192.png` | 4112 | bfa8497b872d |
 | `site/icons/icon-512.png` | 13041 | e37dc86f955c |
 | `site/icons/icon-maskable-512.png` | 13559 | 7778cf5630d1 |
-| `site/index.html` | 9856 | 487ef7364f15 |
+| `site/index.html` | 8849 | 0c9bcb19a0ce |
 | `site/manifest.webmanifest` | 638 | 7d4c29c55875 |
 | `site/pdf.js` | 3873 | 759ed9f98017 |
-| `site/sw.js` | 1189 | ef2b997845df |
+| `site/sw.js` | 1189 | e051ec27cf15 |
 | `site/worker.js` | 3036 | b8f65ae4255f |
 | `test/detector_test.dart` | 2415 | ef8b75cb035d |
 | `test/dewarp_test.dart` | 3939 | 724222a0b388 |
@@ -94,8 +95,9 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `tools/sim/sim.py` | 13240 | 31ef04c79519 |
 | `tools/sim/viz.py` | 1818 | 4b1e51d5284c |
 | `tools/sim/viz_curve.py` | 1465 | 7278513221c0 |
-| `tools/web_e2e/README.md` | 868 | 3c062fb1e550 |
+| `tools/web_e2e/README.md` | 1020 | 5771a85086a1 |
 | `tools/web_e2e/e2e_camera.py` | 4218 | 0eb85e92ccbf |
 | `tools/web_e2e/e2e_import_curved.py` | 1520 | ee4ea5dfe1c9 |
+| `tools/web_e2e/e2e_safari_fallback.py` | 2878 | 0a0adbdff28c |
 | `tools/web_e2e/node_pipeline.js` | 977 | a9ab7dfbc7ff |
 | `vercel.json` | 591 | cd8b896a719e |

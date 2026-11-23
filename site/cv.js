@@ -978,8 +978,13 @@
       const sx = M.min(w - 1, (x / sm.s) | 0), sy = M.min(h - 1, (y / sm.s) | 0), i = (sy * w + sx) * 4, o = (y * sm.w + x) * 4;
       rs[o] = rgba[i]; rs[o + 1] = rgba[i + 1]; rs[o + 2] = rgba[i + 2]; rs[o + 3] = 255;
     }
+    const suggest = !reliable && corners && quadArea(corners) > 0.15 * w * h ? corners : null;
     return {
-      corners: reliable ? corners : null, dewarp: model, kind, curvature, fineRotation: fine,
+      corners: reliable ? corners : null, dewarp: model, kind, curvature,
+      // Không đủ tin cậy để tự cắt nhưng có ứng viên → gợi ý khung ban đầu cho người dùng chỉnh
+      suggest,
+      // Chỉ tự làm thẳng theo dòng chữ khi KHÔNG có khung nào (tránh xoay chồng lên khung gợi ý)
+      fineRotation: suggest ? 0 : fine,
       confidence: det.conf, issues: quality(w, h, sm.g, sm.w, sm.h, det, rs), width: w, height: h,
     };
   }

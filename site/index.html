@@ -31,20 +31,13 @@
         <span class="bl"><b>Scan tài liệu</b><small>Tự nhận 4 góc • nắn phẳng • làm sáng</small></span>
         <span class="chev">›</span>
       </button>
-      <div class="tiles">
+      <div class="tiles two">
         <label class="tile"><input type="file" id="fileImport" accept="image/*" multiple hidden>
           <span class="ti g-teal">🖼️</span>Chọn ảnh</label>
-        <button class="tile" data-go="library"><span class="ti g-amber">📁</span>Tài liệu<br>đã lưu</button>
-        <button class="tile" data-go="settings"><span class="ti g-coral">⚙️</span>Cài đặt</button>
-      </div>
-      <div id="installBox" class="note hidden">
-        <b>📲 Cài APP scan PDF lên màn hình chính</b>
-        <span id="installText">Mở nhanh như app, dùng được khi không có mạng.</span>
-        <button id="btnInstall" class="btn small">Cài đặt app</button>
+        <button class="tile" data-go="library"><span class="ti g-amber">📁</span>Tài liệu</button>
       </div>
       <h3 id="recentTitle" class="hidden">Gần đây</h3>
-      <div id="recent"></div>
-      <div class="note teal">🔒 Dữ liệu chỉ lưu trên điện thoại này. Không cần đăng nhập, không gửi ảnh lên máy chủ. Chỉ chia sẻ khi bạn bấm Chia sẻ.</div>
+      <div id="recent" class="home-list"></div>
     </main>
     <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
   </section>
@@ -161,16 +154,7 @@
         <label class="lbl">Chế độ màu mặc định</label>
         <div class="chips" id="setMode"></div>
       </div>
-      <div class="card">
-        <b>Lưu trữ trên máy</b>
-        <p class="muted" id="storageInfo">…</p>
-        <button class="btn outline small" id="btnPersist">Giữ dữ liệu lâu dài</button>
-      </div>
-      <div class="card">
-        <b>Ứng dụng Android</b>
-        <p class="muted">Bản cài APK (có thêm OCR). <a href="about.html">Trang tải APK & giới thiệu ›</a></p>
-      </div>
-      <p class="muted center">Phiên bản web 0.3.0</p>
+      <p class="muted center">Phiên bản web 0.4.0</p>
     </main>
     <footer class="foot"><b>APP scan PDF</b> &nbsp;•&nbsp; App làm bởi <b>Đào Duy Thanh</b><br>© since 2026</footer>
   </section>

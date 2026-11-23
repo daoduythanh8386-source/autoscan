@@ -1,5 +1,5 @@
 /* APP scan PDF – service worker: chạy offline sau lần mở đầu tiên. */
-const CACHE = 'appscanpdf-v3';
+const CACHE = 'appscanpdf-v4';
 const SHELL = ['./', 'index.html', 'app.css', 'app.js', 'cv.js', 'worker.js', 'pdf.js', 'config.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'about.html'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
