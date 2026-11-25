@@ -22,7 +22,11 @@ Project → Settings → Build & Deployment → **Framework Preset: Other** (Roo
 ## Cách dùng (giống CamScanner)
 1. Bấm nút camera tròn → chọn **Một trang** hoặc **Nhiều trang** → giữ máy yên để app tự chụp (hoặc bấm chụp).
 2. **Cắt**: kéo 4 góc hoặc 4 cạnh (có kính lúp). Các nút: Tự động, Toàn ảnh, Xoay, Nắn cong, Bỏ ảnh → **Tiếp**.
-3. **Bộ lọc**: Tăng cường / Màu sáng / Gốc / Xám / Trắng đen; 🎚️ để chỉnh sáng, tương phản, làm thẳng → **Xong**.
+3. **Bộ lọc** (như CamScanner): **Tự động** / **Magic Color** / **Làm sáng** / Gốc / Xám / Trắng đen.
+   - Nút **☀ Xoá bóng** (bật sẵn): xoá bóng đèn, bóng tay, bóng điện thoại hắt lên giấy, kể cả bóng có mép sắc.
+     Nét chữ giữ nguyên độ đậm và độ sắc (không làm mờ); highlight màu, con dấu, ảnh màu được giữ lại.
+   - 🎚️ để chỉnh Độ sáng, Tương phản, **Chi tiết** (độ nét), Làm thẳng → **Xong**.
+   - Giới hạn: một ô xám trơn (không có chữ) nằm giữa trang có thể bị coi là nền và làm trắng, giống các app scan khác.
 4. **Tài liệu**: Thêm trang, Nhập ảnh, Chia sẻ (PDF/JPG/ảnh gốc), Lưu PDF. Chạm 1 trang để cắt lại, đổi bộ lọc, xoay, đổi thứ tự, xoá.
 
 Mỗi trang được dựng ảnh chất lượng cao (A4 300 DPI) **một lần** khi bấm Xong, nên tạo PDF gần như tức thì.
