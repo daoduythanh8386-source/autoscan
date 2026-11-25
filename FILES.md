@@ -1,6 +1,6 @@
 # Danh sách file dự án (tự sinh bởi scripts/check_files.py --write)
 
-Tổng: **98 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
+Tổng: **99 file**. Thư mục `android/`, `ios/` KHÔNG cần upload –
 chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Actions.
 
 | File | Byte | SHA-256 (12 ký tự đầu) |
@@ -14,15 +14,16 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `assets/fonts/DejaVuSans.ttf` | 759720 | ae7b7855e115 |
 | `docs/BUILD.md` | 1827 | eb6987aa5791 |
 | `docs/DEPENDENCIES.md` | 2040 | 0dad5eb5d8a7 |
-| `docs/DEPLOY_VERCEL.md` | 2486 | 503267eabf6c |
+| `docs/DEPLOY_VERCEL.md` | 3006 | 85a6e5aa7a36 |
 | `docs/GEOMETRY_VALIDATION.md` | 5666 | 98bcacbe1767 |
 | `docs/REQUIREMENTS_MATRIX.md` | 7770 | aa5a590cdf03 |
 | `docs/RISKS.md` | 3435 | e031421d8368 |
 | `docs/TEST_PLAN.md` | 2945 | c0b2b274ed28 |
-| `docs/TEST_REPORT.md` | 1306 | c02b321fe368 |
+| `docs/TEST_REPORT.md` | 2273 | ed41f8ccd86b |
 | `docs/USER_GUIDE.md` | 2515 | 50d516f422c2 |
 | `docs/img/compare_tilt40.jpg` | 458342 | c5e78e9172c9 |
 | `docs/img/curve_compare.jpg` | 701377 | 1823be26fd12 |
+| `docs/img/deshadow_compare.jpg` | 668520 | aca202a3d4d0 |
 | `docs/img/enh_compare.jpg` | 318514 | bfb71b852dff |
 | `docs/img/giao_dien_moi.png` | 790395 | bfb561179d33 |
 | `docs/img/web_curved_result.jpg` | 72004 | 413a853162fe |
@@ -67,18 +68,18 @@ chúng được sinh tự động bởi `scripts/bootstrap.sh` trên GitHub Acti
 | `scripts/patch_platforms.py` | 4757 | 8130769c9d97 |
 | `scripts/vercel_build.sh` | 513 | 77b8a8ac32b7 |
 | `site/about.html` | 4851 | 896befb1d84b |
-| `site/app.css` | 12357 | fdab12005a7f |
-| `site/app.js` | 48547 | 14e4d862f1fa |
+| `site/app.css` | 12597 | ac41d4b7278c |
+| `site/app.js` | 49304 | 24f8693f5481 |
 | `site/config.js` | 302 | 637778fd9257 |
-| `site/cv.js` | 55856 | bb709cc14657 |
+| `site/cv.js` | 63948 | 7c41cb89b904 |
 | `site/icons/apple-touch-icon.png` | 3727 | 94d53bf5b825 |
 | `site/icons/icon-192.png` | 4112 | bfa8497b872d |
 | `site/icons/icon-512.png` | 13041 | e37dc86f955c |
 | `site/icons/icon-maskable-512.png` | 13559 | 7778cf5630d1 |
-| `site/index.html` | 8257 | 622f59915a16 |
+| `site/index.html` | 8488 | f11ef82a8a6d |
 | `site/manifest.webmanifest` | 638 | 7d4c29c55875 |
 | `site/pdf.js` | 3873 | 759ed9f98017 |
-| `site/sw.js` | 1189 | 6ed83f7640d6 |
+| `site/sw.js` | 1189 | 2d452fcf8812 |
 | `site/worker.js` | 3036 | b8f65ae4255f |
 | `test/detector_test.dart` | 2415 | ef8b75cb035d |
 | `test/dewarp_test.dart` | 3939 | 724222a0b388 |

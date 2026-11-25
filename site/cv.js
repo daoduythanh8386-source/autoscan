@@ -795,8 +795,10 @@
   }
 
   // ------------------------------------------------------------ làm sáng
-  function bgModel(rgba, w, h) {
-    const block = M.max(2, M.ceil(M.max(w, h) / 96)), gw = M.ceil(w / block), gh = M.ceil(h / block);
+  /** Mô hình nền giấy. fine=true (Xoá bóng): lưới mịn hơn + lọc trung vị giữ mép bóng cứng
+   *  (bóng tay/điện thoại dưới đèn) thay vì làm nhoè thành viền. */
+  function bgModel(rgba, w, h, fine) {
+    const block = M.max(2, M.ceil(M.max(w, h) / (fine ? 220 : 96))), gw = M.ceil(w / block), gh = M.ceil(h / block);
     const grid = new Float64Array(gw * gh * 3), valid = new Uint8Array(gw * gh);
     const hist = [new Int32Array(256), new Int32Array(256), new Int32Array(256)];
     for (let by = 0; by < gh; by++) for (let bx = 0; bx < gw; bx++) {
@@ -841,7 +843,27 @@
       }
       return o;
     };
-    const sm = blur(blur(grid)), level = [255, 255, 255];
+    const median3 = (gsrc) => {
+      const o = new Float64Array(gsrc.length), v = new Float64Array(9);
+      for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) for (let c = 0; c < 3; c++) {
+        let n = 0;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          const yy = M.min(gh - 1, M.max(0, y + dy)), xx = M.min(gw - 1, M.max(0, x + dx)); v[n++] = gsrc[(yy * gw + xx) * 3 + c];
+        }
+        o[(y * gw + x) * 3 + c] = v.sort()[4];
+      }
+      return o;
+    };
+    const blur3 = (gsrc) => {
+      const o = new Float64Array(gsrc.length);
+      for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) for (let c = 0; c < 3; c++) {
+        let s = 0;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) s += gsrc[(M.min(gh - 1, M.max(0, y + dy)) * gw + M.min(gw - 1, M.max(0, x + dx))) * 3 + c];
+        o[(y * gw + x) * 3 + c] = s / 9;
+      }
+      return o;
+    };
+    const sm = fine ? blur3(median3(median3(grid))) : blur(blur(grid)), level = [255, 255, 255];
     for (let c = 0; c < 3; c++) {
       const vals = []; for (let i = c; i < sm.length; i += 3) vals.push(sm[i]); vals.sort((a, b) => a - b);
       level[c] = M.max(1, vals[M.min(vals.length - 1, M.floor(vals.length * 0.9))]);
@@ -850,6 +872,82 @@
     let mn = Infinity, mxl = 0;
     for (let i = 0; i < sm.length; i += 3) { const l = sm[i] * 0.299 + sm[i + 1] * 0.587 + sm[i + 2] * 0.114; mn = M.min(mn, l); mxl = M.max(mxl, l); }
     return { gw, gh, grid: sm, level, uneven: mxl ? mn / mxl : 1 };
+  }
+  /** Lọc max/min 1 chiều (van Herk – Gil-Werman, O(1)/điểm) trên mặt phẳng float. */
+  function vhg(src, w, h, r, isMax, horizontal) {
+    const out = new Float32Array(src.length), k = 2 * r + 1;
+    const n = horizontal ? w : h, lines = horizontal ? h : w;
+    const g = new Float32Array(n + k), hh = new Float32Array(n + k), buf = new Float32Array(n + 2 * r);
+    const pick = isMax ? (a, b) => (a > b ? a : b) : (a, b) => (a < b ? a : b);
+    for (let L = 0; L < lines; L++) {
+      const at = (i) => horizontal ? L * w + i : i * w + L;
+      for (let i = 0; i < n + 2 * r; i++) { const j = M.min(n - 1, M.max(0, i - r)); buf[i] = src[at(j)]; }
+      const m = n + 2 * r;
+      for (let i = 0; i < m; i++) g[i] = i % k === 0 ? buf[i] : pick(g[i - 1], buf[i]);
+      for (let i = m - 1; i >= 0; i--) hh[i] = (i % k === k - 1 || i === m - 1) ? buf[i] : pick(hh[i + 1], buf[i]);
+      for (let i = 0; i < n; i++) out[at(i)] = pick(hh[i], g[i + k - 1]);
+    }
+    return out;
+  }
+  /** Nền giấy chi tiết theo từng điểm ảnh cho chế độ Xoá bóng:
+   *  phép đóng (max rồi min, bán kính r) xoá nét chữ ≤ 2r khỏi bản đồ nền nhưng GIỮ mép bóng
+   *  đúng vị trí; kẹp theo mô hình thô để vùng nội dung lớn (ô đen, ảnh) không bị coi là nền. */
+  function bgPixel(rgba, w, h, coarse, gate) {
+    const f = M.max(1, M.round(M.max(w, h) / 1200)), sw = M.ceil(w / f), sh = M.ceil(h / f);
+    const r = M.max(3, M.round(M.max(w, h) / 250 / f));
+    const planes = [0, 1, 2].map(() => new Float32Array(sw * sh));
+    for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) {
+      let a = 0, b = 0, c = 0, n = 0;
+      for (let dy = 0; dy < f; dy++) for (let dx = 0; dx < f; dx++) {
+        const X = M.min(w - 1, x * f + dx), Y = M.min(h - 1, y * f + dy), i = (Y * w + X) * 4; a += rgba[i]; b += rgba[i + 1]; c += rgba[i + 2]; n++;
+      }
+      const k = y * sw + x; planes[0][k] = a / n; planes[1][k] = b / n; planes[2][k] = c / n;
+    }
+    const closed = planes.map((pl) => vhg(vhg(vhg(vhg(pl, sw, sh, r, true, true), sw, sh, r, true, false), sw, sh, r, false, true), sw, sh, r, false, false));
+    const paperL = coarse.level[0] * 0.299 + coarse.level[1] * 0.587 + coarse.level[2] * 0.114, tmp = [0, 0, 0], tg = [0, 0, 0];
+    // Bản đồ "có bóng gần đây": độ tối của mô hình thô so với giấy, nới rộng 2 ô rồi làm mượt.
+    const gw = gate.gw, gh = gate.gh, dark = new Float32Array(gw * gh), gL = gate.level[0] * 0.299 + gate.level[1] * 0.587 + gate.level[2] * 0.114;
+    for (let k = 0; k < gw * gh; k++) { const L = gate.grid[k * 3] * 0.299 + gate.grid[k * 3 + 1] * 0.587 + gate.grid[k * 3 + 2] * 0.114; dark[k] = M.max(0, 1 - L / gL); }
+    // phép mở (min rồi max) bán kính ~4% trang: bỏ các ô xám/khung nhỏ là NỘI DUNG, chỉ giữ vùng bóng lớn
+    const ro = M.max(2, M.round(M.max(gw, gh) * 0.045));
+    const opened = vhg(vhg(vhg(vhg(dark, gw, gh, ro, false, true), gw, gh, ro, false, false), gw, gh, ro, true, true), gw, gh, ro, true, false);
+    let dil = vhg(vhg(opened, gw, gh, 2, true, true), gw, gh, 2, true, false);
+    const gb = new Float32Array(gw * gh);
+    for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) { let a = 0, n = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= gw || yy >= gh) continue; a += dil[yy * gw + xx]; n++; }
+      gb[y * gw + x] = a / n; }
+    const gateAt = (X, Y) => { const v = gb[M.min(gh - 1, (Y / h * gh) | 0) * gw + M.min(gw - 1, (X / w * gw) | 0)]; return M.max(0, M.min(1, (v - 0.05) / 0.08)); };
+    const outp = [0, 1, 2].map(() => new Float32Array(sw * sh));
+    for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) {
+      const k = y * sw + x;
+      const X = M.min(w - 1, x * f + (f >> 1)), Y = M.min(h - 1, y * f + (f >> 1));
+      bgSample(coarse, X, Y, w, h, tmp); bgSample(gate, X, Y, w, h, tg);
+      const c0 = closed[0][k], c1 = closed[1][k], c2 = closed[2][k], L = 0.299 * c0 + 0.587 * c1 + 0.114 * c2;
+      // màu nền chi tiết phải trung tính & cùng sắc độ với giấy (bóng đèn chỉ làm tối, không đổi màu)
+      const mx = M.max(c0, c1, c2), mn = M.min(c0, c1, c2), sC = c0 + c1 + c2 + 1e-3, sT = tmp[0] + tmp[1] + tmp[2] + 1e-3;
+      const chroma = M.max(M.abs(c0 / sC - tmp[0] / sT), M.abs(c1 / sC - tmp[1] / sT), M.abs(c2 / sC - tmp[2] / sT));
+      let wgt = gateAt(X, Y);
+      if (L < 0.35 * paperL || mx - mn > 0.3 * mx + 12) wgt = 0;
+      else wgt *= M.max(0, M.min(1, (0.06 - chroma) / 0.03));
+      for (let c = 0; c < 3; c++) {
+        const v = M.max(0.6 * tmp[c], M.min(1.6 * tmp[c], closed[c][k]));
+        outp[c][k] = M.max(1, wgt * v + (1 - wgt) * tg[c]);
+      }
+    }
+    // làm mượt nhẹ 3×3 để giảm nhiễu
+    const sm = outp.map((pl) => { const o = new Float32Array(pl.length);
+      for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) { let s2 = 0;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) s2 += pl[M.min(sh - 1, M.max(0, y + dy)) * sw + M.min(sw - 1, M.max(0, x + dx))];
+        o[y * sw + x] = s2 / 9; } return o; });
+    return { f, sw, sh, planes: sm, level: coarse.level };
+  }
+  function bgPixelSample(bp, x, y, out) {
+    if (bp.f === 1) { const k = y * bp.sw + x; out[0] = bp.planes[0][k]; out[1] = bp.planes[1][k]; out[2] = bp.planes[2][k]; return; }
+    const fx = M.min(bp.sw - 1, M.max(0, (x + 0.5) / bp.f - 0.5)), fy = M.min(bp.sh - 1, M.max(0, (y + 0.5) / bp.f - 0.5));
+    const x0 = fx | 0, y0 = fy | 0, x1 = M.min(bp.sw - 1, x0 + 1), y1 = M.min(bp.sh - 1, y0 + 1), ax = fx - x0, ay = fy - y0;
+    for (let c = 0; c < 3; c++) { const p = bp.planes[c];
+      const t = p[y0 * bp.sw + x0] + (p[y0 * bp.sw + x1] - p[y0 * bp.sw + x0]) * ax, b = p[y1 * bp.sw + x0] + (p[y1 * bp.sw + x1] - p[y1 * bp.sw + x0]) * ax;
+      out[c] = t + (b - t) * ay; }
   }
   function bgSample(bg, x, y, w, h, out) {
     const fx = M.max(0, M.min(bg.gw - 1, (x + 0.5) / w * bg.gw - 0.5)), fy = M.max(0, M.min(bg.gh - 1, (y + 0.5) / h * bg.gh - 0.5));
@@ -862,15 +960,20 @@
   /** Tăng cường tài liệu. p.mode: original | document | bw | gray. */
   function enhance(rgba, w, h, p) {
     let out = new Uint8ClampedArray(rgba.length);
-    const whiten = p.mode !== 'original', s = whiten ? 1 : M.max(0, M.min(1, p.shadow ?? 0.7));
+    // light (Làm sáng): giữ màu gốc nhưng đưa nền về trắng một phần
+    const whiten = p.mode !== 'original' && p.mode !== 'light';
+    const s = whiten || p.mode === 'light' || p.deshadow ? 1 : M.max(0, M.min(1, p.shadow ?? 0.7));
     const tmp = [0, 0, 0];
     if (whiten || s > 0.01) {
-      const bg = bgModel(rgba, w, h), T = 250;
+      const bg = bgModel(rgba, w, h, false), T = 250;
+      const bp = p.deshadow ? bgPixel(rgba, w, h, bgModel(rgba, w, h, true), bg) : null;
+      if (p.mode === 'light') bg.level = bg.level.map((v) => v + (250 - v) * 0.75);
+      const sampleBg = bp ? (x, y, o) => bgPixelSample(bp, x, y, o) : (x, y, o) => bgSample(bg, x, y, w, h, o);
       let white = 255, black = 0;
       if (whiten) {
         const hist = new Int32Array(512); let n = 0;
         for (let i = 0; i < w * h; i += 5) {
-          bgSample(bg, i % w, (i / w) | 0, w, h, tmp); const j = i * 4;
+          sampleBg(i % w, (i / w) | 0, tmp); const j = i * 4;
           const l = 0.299 * rgba[j] * T / tmp[0] + 0.587 * rgba[j + 1] * T / tmp[1] + 0.114 * rgba[j + 2] * T / tmp[2];
           hist[M.min(511, M.max(0, M.round(l)))]++; n++;
         }
@@ -880,7 +983,7 @@
       const gain = 255 / M.max(1, white - black);
       let o = 0;
       for (let y = 0; y < h; y++) for (let x = 0; x < w; x++, o += 4) {
-        bgSample(bg, x, y, w, h, tmp);
+        sampleBg(x, y, tmp);
         for (let c = 0; c < 3; c++) {
           const v = rgba[o + c], ref = whiten ? T : bg.level[c];
           let nv = v * ref / tmp[c]; if (whiten) nv = (nv - black) * gain;
@@ -889,6 +992,13 @@
         out[o + 3] = 255;
       }
     } else out.set(rgba);
+    if (p.mode === 'magic') {
+      // Magic Color: nền trắng + màu mực/dấu/chữ ký tươi hơn (tăng bão hoà quanh xám, không đổi độ sáng)
+      for (let i = 0; i < out.length; i += 4) {
+        const r = out[i], g = out[i + 1], b = out[i + 2], l = 0.299 * r + 0.587 * g + 0.114 * b;
+        out[i] = l + (r - l) * 1.45; out[i + 1] = l + (g - l) * 1.45; out[i + 2] = l + (b - l) * 1.45;
+      }
+    }
     if (p.mode === 'gray' || p.mode === 'bw') {
       for (let i = 0; i < out.length; i += 4) { const l = (out[i] * 299 + out[i + 1] * 587 + out[i + 2] * 114) / 1000; out[i] = out[i + 1] = out[i + 2] = l; }
     }
@@ -902,7 +1012,8 @@
       });
       for (let i = 0; i < out.length; i += 4) { out[i] = luts[0][out[i]]; out[i + 1] = luts[1][out[i + 1]]; out[i + 2] = luts[2][out[i + 2]]; }
     }
-    if ((p.sharpness || 0) > 0.01 && p.mode !== 'bw') out = unsharp(out, w, h, p.sharpness);
+    const sharp = M.max(p.sharpness || 0, p.mode === 'magic' ? 0.35 : 0);
+    if (sharp > 0.01 && p.mode !== 'bw') out = unsharp(out, w, h, sharp);
     return out;
   }
   function sauvola(g4, w, h) {

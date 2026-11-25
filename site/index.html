@@ -95,6 +95,7 @@
       <button class="icon-btn" id="filBack" aria-label="Quay lại cắt">‹</button>
       <h2 class="grow" id="filTitle">Bộ lọc</h2>
       <button class="icon-btn" id="filRot" aria-label="Xoay">⟳</button>
+      <button class="pill-btn" id="filShadow" aria-label="Xoá bóng đèn">☀ Xoá bóng</button>
       <button class="icon-btn" id="filAdj" aria-label="Điều chỉnh">🎚️</button>
     </div>
     <div class="fil-view" id="filView"><canvas id="filCanvas"></canvas><div class="spin dark hidden" id="filSpin"></div>
@@ -102,6 +103,7 @@
     <div class="adj hidden" id="adjPanel">
       <div class="slider"><span>Độ sáng</span><input type="range" id="adjB" min="-1" max="1" step="0.05"><output></output></div>
       <div class="slider"><span>Tương phản</span><input type="range" id="adjC" min="-1" max="1" step="0.05"><output></output></div>
+      <div class="slider"><span>Chi tiết</span><input type="range" id="adjS" min="0" max="1" step="0.05"><output></output></div>
       <div class="slider"><span>Làm thẳng</span><input type="range" id="adjR" min="-15" max="15" step="0.1"><output></output></div>
     </div>
     <div class="fil-strip" id="filStrip"></div>

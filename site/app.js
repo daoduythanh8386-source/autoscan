@@ -10,11 +10,12 @@
   const OUT = 3508;    // ảnh kết quả (A4 @ 300 DPI)
   const THUMB = 420;
   const FILTERS = [
-    { id: 'auto', label: 'Tăng cường', p: { mode: 'document', shadow: 1, brightness: 0, contrast: 0 } },
-    { id: 'bright', label: 'Màu sáng', p: { mode: 'original', shadow: 1, brightness: 0.06, contrast: 0.15 } },
-    { id: 'original', label: 'Gốc', p: { mode: 'original', shadow: 0, brightness: 0, contrast: 0 } },
-    { id: 'gray', label: 'Xám', p: { mode: 'gray', shadow: 1, brightness: 0, contrast: 0 } },
-    { id: 'bw', label: 'Trắng đen', p: { mode: 'bw', shadow: 1, brightness: 0, contrast: 0 } },
+    { id: 'auto', label: 'Tự động', p: { mode: 'document', shadow: 1, brightness: 0, contrast: 0, sharpness: 0.15, deshadow: true } },
+    { id: 'magic', label: 'Magic Color', p: { mode: 'magic', shadow: 1, brightness: 0, contrast: 0, sharpness: 0.35, deshadow: true } },
+    { id: 'light', label: 'Làm sáng', p: { mode: 'light', shadow: 1, brightness: 0, contrast: 0, sharpness: 0.15, deshadow: true } },
+    { id: 'original', label: 'Gốc', p: { mode: 'original', shadow: 0, brightness: 0, contrast: 0, sharpness: 0, deshadow: false } },
+    { id: 'gray', label: 'Xám', p: { mode: 'gray', shadow: 1, brightness: 0, contrast: 0, sharpness: 0.15, deshadow: true } },
+    { id: 'bw', label: 'Trắng đen', p: { mode: 'bw', shadow: 1, brightness: 0, contrast: 0, sharpness: 0, deshadow: true } },
   ];
   const PAGE_SIZES = [['a4', 'A4'], ['auto', 'Theo tài liệu'], ['letter', 'Letter']];
 
@@ -68,6 +69,7 @@
   // ------------------------------------------------------------ cài đặt
   const KEY = 'appscanpdf.settings';
   const S = Object.assign({ auto: true, grid: true, filter: 'auto', page: 'a4' }, (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } })());
+  if (S.filter === 'bright') S.filter = 'light';
   const saveS = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* riêng tư */ } };
 
   // ------------------------------------------------------------ IndexedDB (ảnh lưu dạng byte – ổn định trên Safari)
@@ -160,7 +162,8 @@
     p.corners = scaleQ(e.corners, s); p.dewarp = scaleModel(e.dewarp, s);
     return p;
   }
-  const filterParams = (id) => (FILTERS.find((f) => f.id === id) || FILTERS[0]).p;
+  const FALIAS = { bright: 'light' };
+  const filterParams = (id) => (FILTERS.find((f) => f.id === (FALIAS[id] || id)) || FILTERS[0]).p;
 
   // ------------------------------------------------------------ điều hướng
   const stack = ['home'];
@@ -565,7 +568,8 @@
       orig = null; syncSliders(); strip(); render();
     }
     function syncSliders() {
-      for (const [id, k] of [['#adjB', 'brightness'], ['#adjC', 'contrast'], ['#adjR', 'fineRotation']]) { const el = $(id); el.value = page.edit[k] || 0; el.nextElementSibling.textContent = (+el.value).toFixed(k === 'fineRotation' ? 1 : 2); }
+      for (const [id, k] of [['#adjB', 'brightness'], ['#adjC', 'contrast'], ['#adjS', 'sharpness'], ['#adjR', 'fineRotation']]) { const el = $(id); el.value = page.edit[k] || 0; el.nextElementSibling.textContent = (+el.value).toFixed(k === 'fineRotation' ? 1 : 2); }
+      $('#filShadow').classList.toggle('on', !!page.edit.deshadow);
     }
     function render(liveMode) {
       if (!base) return;
@@ -600,7 +604,11 @@
       const el = $(id);
       el.oninput = () => { page.edit[k] = parseFloat(el.value); el.nextElementSibling.textContent = (+el.value).toFixed(k === 'fineRotation' ? 1 : 2); page.dirty = true; render(true); clearTimeout(t); t = setTimeout(() => render(false), 400); };
     }
-    bindSlider('#adjB', 'brightness'); bindSlider('#adjC', 'contrast'); bindSlider('#adjR', 'fineRotation');
+    bindSlider('#adjB', 'brightness'); bindSlider('#adjC', 'contrast'); bindSlider('#adjS', 'sharpness'); bindSlider('#adjR', 'fineRotation');
+    $('#filShadow').onclick = () => {
+      page.edit.deshadow = !page.edit.deshadow; page.dirty = true; syncSliders(); render(); strip();
+      toast(page.edit.deshadow ? 'Đã bật xoá bóng đèn' : 'Đã tắt xoá bóng', 1200);
+    };
     $('#filAdj').onclick = () => $('#adjPanel').classList.toggle('hidden');
     $('#filRot').onclick = () => { page.edit.rotation = ((page.edit.rotation || 0) + 1) % 4; page.dirty = true; render(); strip(); };
     const hold = $('#filHold');
